@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "airbnb-app-rn",
-    "slug": "airbnb-app-rn",
+    "name": "staylo-app-rn",
+    "slug": "staylo-app-rn",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "airbnbapprn",
+    "scheme": "stayloapprn",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
