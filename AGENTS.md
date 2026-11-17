@@ -39,3 +39,14 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Commits
+
+- Commit only when the user asks. Lint and typecheck pass first.
+- Use [Conventional Commits](https://www.conventionalcommits.org/) in English: `type(scope): subject`.
+  - Types: `feat`, `fix`, `refactor`, `style` (formatting only), `docs`, `test`, `chore` (deps, config, tooling), `perf`, `ci`.
+  - Scope is optional and names the feature or area, e.g. `home`, `search`, `auth`, `booking`, `api`.
+  - Subject: imperative, lowercase, no trailing period, at most 72 characters (`feat(home): add category filter`).
+  - Body (optional, wrapped at 72): explain why, plus anything a reviewer can't see in the diff. Breaking changes use `!` after the type and a `BREAKING CHANGE:` footer.
+- One logical change per commit. Split unrelated work (setup vs. feature vs. docs) into separate commits.
+- Never commit `.env` files or secrets. Check `git status` before staging, and stage files by path instead of `git add -A`.
