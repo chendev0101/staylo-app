@@ -1,98 +1,127 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { CategoryBar } from '@/components/category-bar';
+import { ListingCard } from '@/components/listing-card';
+import { Spacing, useThemeColors } from '@/constants/theme';
+import { CATEGORIES, LISTINGS, type CategoryId } from '@/data/listings';
 
 export default function HomeScreen() {
+  const colors = useThemeColors();
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState<CategoryId>('all');
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
+  const keyword = query.trim().toLowerCase();
+  const listings = LISTINGS.filter(
+    (item) =>
+      (category === 'all' || item.categories.includes(category)) &&
+      (keyword === '' ||
+        item.title.toLowerCase().includes(keyword) ||
+        item.location.toLowerCase().includes(keyword)),
+  );
+
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView edges={['top']} style={[styles.screen, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <View style={styles.greeting}>
+          <Text style={[styles.brand, { color: colors.primary }]}>Staylo</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            找到你的下一個落腳處
+          </Text>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+        <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
+          <SymbolView
+            name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
+            tintColor={colors.textSecondary}
+            size={20}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="搜尋地點或房源"
+            placeholderTextColor={colors.textSecondary}
+            style={[styles.searchInput, { color: colors.text }]}
+            returnKeyType="search"
+            clearButtonMode="while-editing"
           />
-        </ThemedView>
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        <CategoryBar categories={CATEGORIES} selected={category} onSelect={setCategory} />
+      </View>
+
+      <FlatList
+        data={listings}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        keyboardDismissMode="on-drag"
+        renderItem={({ item }) => (
+          <ListingCard
+            listing={item}
+            isFavorite={favorites.has(item.id)}
+            onToggleFavorite={() => toggleFavorite(item.id)}
+          />
+        )}
+        ListEmptyComponent={
+          <Text style={[styles.empty, { color: colors.textSecondary }]}>
+            找不到符合條件的房源
+          </Text>
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  header: {
+    gap: Spacing.lg,
+    paddingTop: Spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  greeting: {
+    paddingHorizontal: Spacing.lg,
+  },
+  brand: {
+    fontSize: 28,
+    fontWeight: '800',
+  },
+  subtitle: {
+    fontSize: 15,
+  },
+  searchBar: {
     flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    gap: Spacing.sm,
+    marginHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: 999,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  searchInput: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    paddingVertical: Spacing.md,
+    fontSize: 16,
   },
-  title: {
+  list: {
+    padding: Spacing.lg,
+    gap: Spacing.xl,
+  },
+  empty: {
     textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    marginTop: Spacing.xl,
   },
 });
