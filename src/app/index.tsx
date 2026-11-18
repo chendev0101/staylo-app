@@ -1,9 +1,11 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ListingCard } from '@/components/listing-card';
 import { Chip } from '@/components/ui/chip';
+import { IconButton } from '@/components/ui/icon-button';
 import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { CATEGORIES, LISTINGS, type CategoryId } from '@/data/listings';
@@ -43,6 +45,13 @@ export default function HomeScreen() {
             </Text>
             <Text tone="muted">找到你的下一個落腳處</Text>
           </View>
+          {__DEV__ && (
+            <IconButton
+              icon={{ ios: 'paintpalette', android: 'palette', web: 'palette' }}
+              accessibilityLabel="開啟設計系統瀏覽頁"
+              onPress={() => router.push('/design-system')}
+            />
+          )}
         </View>
 
         <TextField
