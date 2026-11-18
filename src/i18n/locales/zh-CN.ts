@@ -31,7 +31,13 @@ export const zhCN = {
     system: '跟随系统',
     systemCurrent: '当前：{{language}}',
   },
+  appearance: {
+    system: '跟随系统',
+    light: '浅色',
+    dark: '深色',
+  },
   a11y: {
+    toggleAppearance: '切换外观（开发用），当前：{{mode}}',
     openLanguage: '更改语言',
     openDesignSystem: '打开设计系统浏览页',
     close: '关闭',

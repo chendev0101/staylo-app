@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
 import { Chip } from '@/components/ui/chip';
 import { IconButton } from '@/components/ui/icon-button';
@@ -53,6 +54,7 @@ export default function HomeScreen() {
             accessibilityLabel={t('a11y.openLanguage')}
             onPress={() => router.push('/language')}
           />
+          <DevAppearanceToggle />
           {__DEV__ && (
             <IconButton
               icon={{ ios: 'paintpalette', android: 'palette', web: 'palette' }}

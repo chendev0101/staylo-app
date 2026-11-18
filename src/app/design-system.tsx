@@ -5,6 +5,7 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTokenValue } from '@/components/design-system/use-token-value';
+import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +39,7 @@ export default function DesignSystemScreen() {
           <Text variant="display">Staylo Design System</Text>
           <Text tone="muted">Tokens and shared components · light and dark follow the system setting</Text>
         </View>
+        <DevAppearanceToggle />
       </View>
 
       <View className="flex-row flex-wrap gap-4">

@@ -31,7 +31,13 @@ export const ja = {
     system: 'システムに従う',
     systemCurrent: '現在：{{language}}',
   },
+  appearance: {
+    system: 'システム',
+    light: 'ライト',
+    dark: 'ダーク',
+  },
   a11y: {
+    toggleAppearance: '外観を切り替え（開発用）、現在：{{mode}}',
     openLanguage: '言語を変更',
     openDesignSystem: 'デザインシステムを開く',
     close: '閉じる',

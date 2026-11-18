@@ -31,7 +31,13 @@ export const en = {
     system: 'Follow system',
     systemCurrent: 'Currently: {{language}}',
   },
+  appearance: {
+    system: 'System',
+    light: 'Light',
+    dark: 'Dark',
+  },
   a11y: {
+    toggleAppearance: 'Toggle appearance (dev), currently: {{mode}}',
     openLanguage: 'Change language',
     openDesignSystem: 'Open design system gallery',
     close: 'Close',

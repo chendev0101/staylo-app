@@ -31,7 +31,13 @@ export const zhTW = {
     system: '跟隨系統',
     systemCurrent: '目前：{{language}}',
   },
+  appearance: {
+    system: '跟隨系統',
+    light: '淺色',
+    dark: '深色',
+  },
   a11y: {
+    toggleAppearance: '切換外觀（開發用），目前：{{mode}}',
     openLanguage: '變更語言',
     openDesignSystem: '開啟設計系統瀏覽頁',
     close: '關閉',
