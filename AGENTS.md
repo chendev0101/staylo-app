@@ -30,6 +30,7 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 - Design tokens live only in `src/global.css`: color variables (light in `@theme`, dark in a `prefers-color-scheme: dark` `:root` block, so `dark:` variants aren't needed for tokens), `--text-*` with line heights, `--font-*`, `--radius-*`, `--shadow-*`, and `--spacing: 4px`. Never hardcode hex colors, font sizes, or spacing outside it; add a token instead. Use px, not rem (native rem is 14). Screen edge padding is `px-5`.
 - Build UI from `src/components/ui/`: Text, Icon, Button, IconButton, Chip, TextField, Badge, and Alert. Set appearance with `variant`/`tone` props, and use `className` for layout only. Promote a view into `ui/` only once two screens need it.
 - Props that can't take `className` (icon `tintColor`, `placeholderTextColor`, spinner color) get colors through `useTokenColor()` (`ui/use-token-color.ts`, with a `.web.ts` twin).
+- Gradients and other vector art use `react-native-svg` with token colors (example: the photo scrim in `src/components/onboarding/photo-hero.tsx`). SVG fills need real color values, so use `useTokenValue()` (`ui/use-token-value.ts`), which resolves the CSS variable on web too.
 - `/design-system` (`src/app/design-system.tsx`) shows every token and `ui/` component. Add new components and tokens there, and keep its typography spec text in sync with `global.css`.
 - Line-height tokens are unitless ratios (`calc(34 / 28)`). On native, a px line height is treated as a multiple of the font size.
 - The dev server doesn't regenerate Tailwind CSS for newly used classes. Restart it with `npx expo start --clear` (or touch `global.css`) when a new class has no effect.
@@ -43,6 +44,13 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 - All UI copy, including accessibility labels, goes through `t()` from `useTranslation()`. Keys live in `src/i18n/locales/zh-TW.ts` (the source of truth). The other locales use `satisfies Translations`, so a missing key fails tsc. Add every new string to all 4 locales in the same change.
 - Content fields are `LocalizedText` (one string per language) and are read with `localize(text, i18n.language)`. Prices are TWD, shown with `formatPrice` (`NT$` + locale digits).
 - Language names in the picker are endonyms and are never translated. The `/design-system` dev page isn't localized.
+
+## Auth and onboarding
+
+- `src/auth/session.tsx` is a **mock** until Clerk is set up: `useSession()` gives `isSignedIn` (persisted) and `isGuest` ("maybe later", memory only). Screens only use `useSession()`, never storage directly. The Clerk plan replaces the implementation behind that hook.
+- Onboarding (`src/app/(onboarding)/`: intro → preferences → welcome) shows whenever the user isn't signed in. The root layout gates it with `Stack.Protected` on `entered = isSignedIn || isGuest`, with `redirectTo` set on both guards. Never redirect manually. The splash screen waits for session and preferences.
+- Travel preferences come from `useTravelPreferences()` (`src/preferences/`). They **order** listings (preferred first) and never filter them. A skip saves an empty choice, so the step isn't repeated.
+- In dev, `/design-system` has a "Replay onboarding" button.
 
 ## Who owns what
 
