@@ -37,6 +37,13 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 - Wrap third-party components such as `expo-image` with `styled()` from `nativewind`; `cssInterop` and `remapProps` don't exist in v5. Get `useColorScheme` from `react-native`.
 - `lightningcss` is pinned to 1.30.1 through `package.json` `overrides`, because newer versions break react-native-css with "failed to deserialize". Don't bump it unless NativeWind's docs say so, and re-check it on every Expo SDK or NativeWind upgrade.
 
+## i18n
+
+- Languages: zh-TW (default and fallback), en, ja, zh-CN, using i18next + react-i18next with the instance in `src/i18n/index.ts`. The device language comes from expo-localization (`resolveDeviceLanguage` in `src/i18n/resolve.ts`). An in-app choice (`/language` sheet) is saved in AsyncStorage under `staylo.language`.
+- All UI copy, including accessibility labels, goes through `t()` from `useTranslation()`. Keys live in `src/i18n/locales/zh-TW.ts` (the source of truth). The other locales use `satisfies Translations`, so a missing key fails tsc. Add every new string to all 4 locales in the same change.
+- Content fields are `LocalizedText` (one string per language) and are read with `localize(text, i18n.language)`. Prices are TWD, shown with `formatPrice` (`NT$` + locale digits).
+- Language names in the picker are endonyms and are never translated. The `/design-system` dev page isn't localized.
+
 ## Who owns what
 
 Each tool has one job. Ask before moving a responsibility to a different tool.
