@@ -92,7 +92,7 @@ export const LISTINGS: Listing[] = [
     pricePerNight: 4500,
     rating: 4.95,
     reviews: 211,
-    imageUrl: unsplash('photo-1564013799919-ab600027ffc6'),
+    imageUrl: unsplash('photo-1510798831971-661eb04b3739'),
     categories: ['cabin', 'house'],
   },
   {
