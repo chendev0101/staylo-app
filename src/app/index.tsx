@@ -1,15 +1,15 @@
-import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { CategoryBar } from '@/components/category-bar';
 import { ListingCard } from '@/components/listing-card';
-import { Spacing, useThemeColors } from '@/constants/theme';
+import { Chip } from '@/components/ui/chip';
+import { Text } from '@/components/ui/text';
+import { TextField } from '@/components/ui/text-field';
 import { CATEGORIES, LISTINGS, type CategoryId } from '@/data/listings';
 
 export default function HomeScreen() {
-  const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<CategoryId>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -33,39 +33,50 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <View style={styles.greeting}>
-          <Text style={[styles.brand, { color: colors.primary }]}>Staylo</Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            找到你的下一個落腳處
-          </Text>
+    // Safe-area insets are runtime values, so they stay inline styles.
+    <View className="flex-1 bg-bg" style={{ paddingTop: insets.top }}>
+      <View className="gap-4 border-b border-border pb-4 pt-2">
+        <View className="flex-row items-center gap-3 px-5">
+          <View className="flex-1">
+            <Text variant="title" tone="primary">
+              Staylo
+            </Text>
+            <Text tone="muted">找到你的下一個落腳處</Text>
+          </View>
         </View>
 
-        <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
-          <SymbolView
-            name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
-            tintColor={colors.textSecondary}
-            size={20}
-          />
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="搜尋地點或房源"
-            placeholderTextColor={colors.textSecondary}
-            style={[styles.searchInput, { color: colors.text }]}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
-          />
-        </View>
+        <TextField
+          value={query}
+          onChangeText={setQuery}
+          placeholder="搜尋地點或房源"
+          leadingIcon={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
+          returnKeyType="search"
+          clearButtonMode="while-editing"
+          accessibilityLabel="搜尋地點或房源"
+          className="mx-5"
+        />
 
-        <CategoryBar categories={CATEGORIES} selected={category} onSelect={setCategory} />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="gap-2 px-5">
+          {CATEGORIES.map((c) => (
+            <Chip
+              key={c.id}
+              label={c.label}
+              icon={c.icon}
+              selected={c.id === category}
+              onPress={() => setCategory(c.id)}
+            />
+          ))}
+        </ScrollView>
       </View>
 
       <FlatList
         data={listings}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
+        contentContainerClassName="gap-6 px-5 pt-5"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
         keyboardDismissMode="on-drag"
         renderItem={({ item }) => (
           <ListingCard
@@ -75,53 +86,11 @@ export default function HomeScreen() {
           />
         )}
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: colors.textSecondary }]}>
+          <Text tone="muted" className="mt-6 text-center">
             找不到符合條件的房源
           </Text>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  header: {
-    gap: Spacing.lg,
-    paddingTop: Spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  greeting: {
-    paddingHorizontal: Spacing.lg,
-  },
-  brand: {
-    fontSize: 28,
-    fontWeight: '800',
-  },
-  subtitle: {
-    fontSize: 15,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginHorizontal: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: 999,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    fontSize: 16,
-  },
-  list: {
-    padding: Spacing.lg,
-    gap: Spacing.xl,
-  },
-  empty: {
-    textAlign: 'center',
-    marginTop: Spacing.xl,
-  },
-});

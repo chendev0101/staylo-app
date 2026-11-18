@@ -3,3 +3,95 @@
 @import "tailwindcss/utilities.css";
 
 @import "nativewind/theme";
+
+/*
+ * Staylo design tokens — the single source of truth for visual values.
+ * All sizes are px (dp on native); native rem is 14, web rem is 16, so rem is avoided.
+ * Colors are CSS variables with light values here and dark overrides below.
+ * Dev server note: Metro caches this file's output, so classes used for the first time
+ * may be missing until this file changes or the server restarts with --clear.
+ */
+@theme {
+  /* Spacing base: p-1 = 4, p-4 = 16, p-5 = 20 (screen edge) */
+  --spacing: 4px;
+
+  /* Colors — light */
+  --color-primary: #ff6b4a;
+  --color-on-primary: #14161f;
+  --color-secondary: #bfebdd;
+  --color-on-secondary: #0f3d30;
+  --color-fg: #14161f;
+  --color-fg-muted: #6a6f7e;
+  --color-bg: #f5f5f2;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eeeeea;
+  --color-border: #e6e5e0;
+  --color-success: #1e8e5a;
+  --color-success-soft: #e3f5ec;
+  --color-danger: #d64545;
+  --color-danger-soft: #fde8e8;
+  --color-info: #2f6feb;
+  --color-info-soft: #e6eefd;
+  --color-warning: #c98a00;
+  --color-warning-soft: #fff4d6;
+
+  /* Font families — one per weight (native can't synthesize weights from one family) */
+  --font-outfit: "Outfit_400Regular";
+  --font-outfit-medium: "Outfit_500Medium";
+  --font-outfit-semibold: "Outfit_600SemiBold";
+  --font-outfit-bold: "Outfit_700Bold";
+
+  /* Type ramp. Line heights must be unitless ratios: react-native-css treats a
+     line-height number as a multiple of font size, so "34px" became 34x on native. */
+  --text-display: 36px;
+  --text-display--line-height: calc(40 / 36); /* 40px */
+  --text-title: 28px;
+  --text-title--line-height: calc(34 / 28); /* 34px */
+  --text-headline: 20px;
+  --text-headline--line-height: calc(26 / 20); /* 26px */
+  --text-body: 16px;
+  --text-body--line-height: calc(24 / 16); /* 24px */
+  --text-label: 15px;
+  --text-label--line-height: calc(20 / 15); /* 20px */
+  --text-caption: 14px;
+  --text-caption--line-height: calc(20 / 14); /* 20px */
+  --text-small: 12px;
+  --text-small--line-height: calc(16 / 12); /* 16px */
+  --text-button: 17px;
+  --text-button--line-height: calc(22 / 17); /* 22px */
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-raised: 0 4px 12px rgb(0 0 0 / 0.08);
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.16);
+}
+
+/* Colors — dark */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #ff7d5e;
+    --color-on-primary: #14161f;
+    --color-secondary: #1f4a3f;
+    --color-on-secondary: #bfebdd;
+    --color-fg: #f4f4f2;
+    --color-fg-muted: #a3a7b3;
+    --color-bg: #0f1014;
+    --color-surface: #1a1c22;
+    --color-surface-muted: #23262e;
+    --color-border: #2e313a;
+    --color-success: #4cc38a;
+    --color-success-soft: #173a2b;
+    --color-danger: #f07070;
+    --color-danger-soft: #3d1e1e;
+    --color-info: #7fa6f5;
+    --color-info-soft: #1c2a47;
+    --color-warning: #f2c14e;
+    --color-warning-soft: #3a2f12;
+  }
+}
