@@ -20,7 +20,9 @@ export type ColorToken =
   | 'info'
   | 'info-soft'
   | 'warning'
-  | 'warning-soft';
+  | 'warning-soft'
+  | 'scrim'
+  | 'on-scrim';
 
 export function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(' ');

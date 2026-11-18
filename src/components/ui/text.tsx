@@ -19,6 +19,7 @@ const tones = {
   primary: 'text-primary',
   'on-primary': 'text-on-primary',
   'on-secondary': 'text-on-secondary',
+  'on-scrim': 'text-on-scrim',
   success: 'text-success',
   danger: 'text-danger',
   info: 'text-info',

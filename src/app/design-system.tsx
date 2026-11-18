@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useTokenValue } from '@/components/design-system/use-token-value';
 import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
 import { Alert } from '@/components/ui/alert';
@@ -16,6 +15,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Text, type TextVariant } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import type { ColorToken } from '@/components/ui/tokens';
+import { useTokenValue } from '@/components/ui/use-token-value';
 import { CATEGORIES, LISTINGS } from '@/data/listings';
 
 /**
@@ -101,6 +101,7 @@ const palette: { token: ColorToken; bg: string; name: string; role: string }[] =
   { token: 'danger', bg: 'bg-danger', name: 'Danger', role: '錯誤狀態' },
   { token: 'info', bg: 'bg-info', name: 'Info', role: '資訊徽章' },
   { token: 'warning', bg: 'bg-warning', name: 'Warning', role: '評分、精選' },
+  { token: 'scrim', bg: 'bg-scrim', name: 'Scrim', role: '照片上的遮罩' },
 ];
 
 function PaletteSection() {

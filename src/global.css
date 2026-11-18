@@ -34,6 +34,8 @@
   --color-info-soft: #e6eefd;
   --color-warning: #c98a00;
   --color-warning-soft: #fff4d6;
+  --color-scrim: rgb(0 0 0 / 0.45);
+  --color-on-scrim: #ffffff;
 
   /* Font families — one per weight (native can't synthesize weights from one family) */
   --font-outfit: "Outfit_400Regular";
@@ -93,5 +95,7 @@
     --color-info-soft: #1c2a47;
     --color-warning: #f2c14e;
     --color-warning-soft: #3a2f12;
+    --color-scrim: rgb(0 0 0 / 0.55);
+    --color-on-scrim: #ffffff;
   }
 }

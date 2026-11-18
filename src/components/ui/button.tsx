@@ -23,6 +23,7 @@ const iconTone: Record<TextTone, ColorToken> = {
   primary: 'primary',
   'on-primary': 'on-primary',
   'on-secondary': 'on-secondary',
+  'on-scrim': 'on-scrim',
   success: 'success',
   danger: 'danger',
   info: 'info',
