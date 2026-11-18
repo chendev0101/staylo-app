@@ -14,15 +14,21 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 
+import { SessionProvider, useSession } from '@/auth/session';
 import { useTokenColor } from '@/components/ui/use-token-color';
 import { LanguagePreferenceProvider, useLanguagePreference } from '@/i18n/language-preference';
+import { TravelPreferencesProvider, useTravelPreferences } from '@/preferences/travel-preferences';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
     <LanguagePreferenceProvider>
-      <AppStack />
+      <SessionProvider>
+        <TravelPreferencesProvider>
+          <AppStack />
+        </TravelPreferencesProvider>
+      </SessionProvider>
     </LanguagePreferenceProvider>
   );
 }
@@ -30,6 +36,10 @@ export default function RootLayout() {
 function AppStack() {
   const { t } = useTranslation();
   const { loaded: languageLoaded } = useLanguagePreference();
+  const session = useSession();
+  const { loaded: preferencesLoaded } = useTravelPreferences();
+  // Onboarding shows whenever the user isn't signed in (and hasn't chosen "maybe later" this session).
+  const entered = session.isSignedIn || session.isGuest;
   // Navigation chrome (headers, sheets) follows the color scheme and uses our tokens;
   // without this React Navigation stays on its light theme (dark title on dark sheet).
   const scheme = useColorScheme();
@@ -42,9 +52,10 @@ function AppStack() {
     Outfit_600SemiBold,
     Outfit_700Bold,
   });
-  // Hold the splash screen until fonts and the saved language are ready,
-  // so the first screen never flashes the wrong font or language.
-  const ready = (fontsLoaded || fontError !== null) && languageLoaded;
+  // Hold the splash screen until fonts, language, session and preferences are ready, so the
+  // first screen never flashes the wrong font/language or shows onboarding to a signed-in user.
+  const ready =
+    (fontsLoaded || fontError !== null) && languageLoaded && session.loaded && preferencesLoaded;
 
   useEffect(() => {
     if (fontError) console.warn('Outfit failed to load, falling back to the system font:', fontError);
@@ -66,8 +77,13 @@ function AppStack() {
           headerShadowVisible: false,
           contentStyle: { backgroundColor: bg },
         }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="design-system" options={{ headerShown: false }} />
+        <Stack.Protected guard={entered} redirectTo="/intro">
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="design-system" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!entered} redirectTo="/">
+          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        </Stack.Protected>
         <Stack.Screen
           name="language"
           options={{

@@ -36,6 +36,48 @@ export const zhTW = {
     light: '淺色',
     dark: '深色',
   },
+  onboarding: {
+    skip: '略過',
+    next: '下一步',
+    start: '開始',
+    describe: {
+      title: '一句話，說出理想住宿',
+      body: 'Staylo 會分辨哪些是必要條件、哪些是你想要的感覺。',
+      query: '安靜、可帶寵物、有溫泉的小木屋，一晚 5,000 內',
+      openQuote: '「',
+      closeQuote: '」',
+      tags: {
+        cabin: '小木屋',
+        pets: '可帶寵物',
+        hotSpring: '溫泉',
+        budget: 'NT$5,000 以內',
+        quiet: '安靜',
+      },
+    },
+    ranked: {
+      title: '依你的需求排序',
+      body: '硬條件一定符合，「安靜、舒適」這類感覺也會納入排序。',
+      bestMatch: '最符合',
+    },
+    policy: {
+      title: '規定問題，原文回答',
+      body: '入住、取消、寵物規定都附上出處，不猜測、不改寫。',
+      question: '可以帶狗入住嗎？',
+      answer: '「可攜帶一隻 10 公斤以下的寵物，需事先告知房東。」',
+      source: '出處：房源規定',
+    },
+    preferences: {
+      title: '你喜歡哪種住宿？',
+      subtitle: '選幾個你感興趣的類型，我們會優先推薦。',
+      continue: '繼續',
+    },
+    welcome: {
+      createAccount: '建立帳號',
+      signIn: '登入',
+      later: '稍後再說',
+      comingSoon: '帳號功能即將推出',
+    },
+  },
   a11y: {
     toggleAppearance: '切換外觀（開發用），目前：{{mode}}',
     openLanguage: '變更語言',

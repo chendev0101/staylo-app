@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSession } from '@/auth/session';
 import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
 import { Alert } from '@/components/ui/alert';
@@ -17,6 +18,7 @@ import { TextField } from '@/components/ui/text-field';
 import type { ColorToken } from '@/components/ui/tokens';
 import { useTokenValue } from '@/components/ui/use-token-value';
 import { CATEGORIES, LISTINGS } from '@/data/listings';
+import { useTravelPreferences } from '@/preferences/travel-preferences';
 
 /**
  * Design-system gallery: every token and ui/ component on one page.
@@ -24,6 +26,8 @@ import { CATEGORIES, LISTINGS } from '@/data/listings';
  */
 export default function DesignSystemScreen() {
   const insets = useSafeAreaInsets();
+  const { signOut } = useSession();
+  const { clear: clearPreferences } = useTravelPreferences();
   return (
     <ScrollView
       className="flex-1 bg-bg"
@@ -41,6 +45,20 @@ export default function DesignSystemScreen() {
         </View>
         <DevAppearanceToggle />
       </View>
+
+      {__DEV__ && (
+        <Button
+          title="Replay onboarding"
+          variant="secondary"
+          size="sm"
+          leadingIcon={{ ios: 'arrow.counterclockwise', android: 'replay', web: 'replay' }}
+          onPress={() => {
+            clearPreferences();
+            signOut(); // the Stack.Protected guard sends the app back to /intro
+          }}
+          className="self-start"
+        />
+      )}
 
       <View className="flex-row flex-wrap gap-4">
         <BrandSection />

@@ -12,22 +12,28 @@ import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { CATEGORIES, LISTINGS, type CategoryId } from '@/data/listings';
 import { localize } from '@/i18n/resolve';
+import { useTravelPreferences } from '@/preferences/travel-preferences';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
+  const { categories: preferred } = useTravelPreferences();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<CategoryId>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   const keyword = query.trim().toLowerCase();
-  const listings = LISTINGS.filter(
+  // Preferred categories (from onboarding) come first; they order, never filter.
+  const isPreferred = (item: (typeof LISTINGS)[number]) =>
+    item.categories.some((c) => preferred.some((p) => p === c));
+  const matches = LISTINGS.filter(
     (item) =>
       (category === 'all' || item.categories.includes(category)) &&
       (keyword === '' ||
         localize(item.title, i18n.language).toLowerCase().includes(keyword) ||
         localize(item.location, i18n.language).toLowerCase().includes(keyword)),
   );
+  const listings = [...matches.filter(isPreferred), ...matches.filter((item) => !isPreferred(item))];
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => {
