@@ -23,6 +23,13 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 - `ios/` and `android/` are generated. Never create or edit them by hand; configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, switch to a development build (`npx expo run:ios`).
 
+## Styling
+
+- NativeWind v5 (release candidate), pinned exactly. `nativewind` and `react-native-css` are a matched pair, so upgrade them together, following https://www.nativewind.dev/v5/.
+- `src/global.css` is the only Tailwind entry point. It is imported once in `src/app/_layout.tsx`, and Metro handles it through `withNativewind` in `metro.config.js`. There is no Babel config.
+- New UI uses `className` with `dark:` variants. Wrap third-party components such as `expo-image` with `styled()` from `nativewind`; `cssInterop` and `remapProps` don't exist in v5. Get `useColorScheme` from `react-native`.
+- `lightningcss` is pinned to 1.30.1 through `package.json` `overrides`, because newer versions break react-native-css with "failed to deserialize". Don't bump it unless NativeWind's docs say so, and re-check it on every Expo SDK or NativeWind upgrade.
+
 ## Who owns what
 
 Each tool has one job. Ask before moving a responsibility to a different tool.
