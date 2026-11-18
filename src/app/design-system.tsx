@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -231,11 +232,12 @@ function InputsSection() {
 }
 
 function ChipsSection() {
+  const { t } = useTranslation();
   return (
     <Section n="07" title="Filter chips">
       <View className="flex-row flex-wrap gap-2">
         {CATEGORIES.map((c, i) => (
-          <Chip key={c.id} label={c.label} icon={c.icon} selected={i === 0} />
+          <Chip key={c.id} label={t(`category.${c.id}`)} icon={c.icon} selected={i === 0} />
         ))}
       </View>
       <View className="flex-row flex-wrap gap-2">

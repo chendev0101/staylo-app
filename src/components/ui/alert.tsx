@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { Icon } from './icon';
@@ -26,13 +27,14 @@ type Props = {
 };
 
 export function Alert({ message, tone = 'success', onDismiss, className }: Props) {
-  const t = tones[tone];
+  const { t } = useTranslation();
+  const s = tones[tone];
   return (
     <View
       accessibilityRole="alert"
-      className={cn('flex-row items-center gap-3 rounded-lg px-4 py-3', t.container, className)}>
-      <Icon name={t.icon} size={22} tone={t.tone} />
-      <Text variant="caption" tone={t.tone} className="flex-1">
+      className={cn('flex-row items-center gap-3 rounded-lg px-4 py-3', s.container, className)}>
+      <Icon name={s.icon} size={22} tone={s.tone} />
+      <Text variant="caption" tone={s.tone} className="flex-1">
         {message}
       </Text>
       {onDismiss && (
@@ -40,8 +42,8 @@ export function Alert({ message, tone = 'success', onDismiss, className }: Props
           onPress={onDismiss}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="關閉">
-          <Icon name={{ ios: 'xmark', android: 'close', web: 'close' }} size={16} tone={t.tone} />
+          accessibilityLabel={t('a11y.close')}>
+          <Icon name={{ ios: 'xmark', android: 'close', web: 'close' }} size={16} tone={s.tone} />
         </Pressable>
       )}
     </View>

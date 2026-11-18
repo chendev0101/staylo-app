@@ -1,11 +1,14 @@
 import { Image as ExpoImage } from 'expo-image';
 import { styled } from 'nativewind';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
 import { Text } from '@/components/ui/text';
 import type { Listing } from '@/data/listings';
+import { formatPrice } from '@/i18n/format';
+import { localize } from '@/i18n/resolve';
 
 const Image = styled(ExpoImage, { className: 'style' });
 
@@ -15,9 +18,8 @@ type Props = {
   onToggleFavorite: () => void;
 };
 
-const priceFormatter = new Intl.NumberFormat('zh-TW');
-
 export function ListingCard({ listing, isFavorite, onToggleFavorite }: Props) {
+  const { t, i18n } = useTranslation();
   return (
     <View className="gap-3">
       <View>
@@ -37,7 +39,7 @@ export function ListingCard({ listing, isFavorite, onToggleFavorite }: Props) {
           }
           tone={isFavorite ? 'primary' : 'fg'}
           selected={isFavorite}
-          accessibilityLabel={isFavorite ? '取消收藏' : '加入收藏'}
+          accessibilityLabel={isFavorite ? t('listing.removeFavorite') : t('listing.addFavorite')}
           onPress={onToggleFavorite}
           className="absolute right-3 top-3"
         />
@@ -46,7 +48,7 @@ export function ListingCard({ listing, isFavorite, onToggleFavorite }: Props) {
       <View className="gap-1">
         <View className="flex-row items-center justify-between gap-2">
           <Text variant="headline" numberOfLines={1} className="flex-1">
-            {listing.title}
+            {localize(listing.title, i18n.language)}
           </Text>
           <View className="flex-row items-center gap-1">
             <Icon name={{ ios: 'star.fill', android: 'star', web: 'star' }} size={14} tone="warning" />
@@ -63,13 +65,13 @@ export function ListingCard({ listing, isFavorite, onToggleFavorite }: Props) {
             tone="fg-muted"
           />
           <Text variant="caption" tone="muted">
-            {listing.location}
+            {localize(listing.location, i18n.language)}
           </Text>
         </View>
         <View className="mt-1 flex-row items-baseline gap-1">
-          <Text variant="headline">NT${priceFormatter.format(listing.pricePerNight)}</Text>
+          <Text variant="headline">{formatPrice(listing.pricePerNight, i18n.language)}</Text>
           <Text variant="caption" tone="muted">
-            / 晚
+            {t('listing.perNight')}
           </Text>
         </View>
       </View>

@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,9 +10,11 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Text } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { CATEGORIES, LISTINGS, type CategoryId } from '@/data/listings';
+import { localize } from '@/i18n/resolve';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<CategoryId>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -21,8 +24,8 @@ export default function HomeScreen() {
     (item) =>
       (category === 'all' || item.categories.includes(category)) &&
       (keyword === '' ||
-        item.title.toLowerCase().includes(keyword) ||
-        item.location.toLowerCase().includes(keyword)),
+        localize(item.title, i18n.language).toLowerCase().includes(keyword) ||
+        localize(item.location, i18n.language).toLowerCase().includes(keyword)),
   );
 
   const toggleFavorite = (id: string) => {
@@ -43,12 +46,17 @@ export default function HomeScreen() {
             <Text variant="title" tone="primary">
               Staylo
             </Text>
-            <Text tone="muted">找到你的下一個落腳處</Text>
+            <Text tone="muted">{t('home.tagline')}</Text>
           </View>
+          <IconButton
+            icon={{ ios: 'globe', android: 'language', web: 'language' }}
+            accessibilityLabel={t('a11y.openLanguage')}
+            onPress={() => router.push('/language')}
+          />
           {__DEV__ && (
             <IconButton
               icon={{ ios: 'paintpalette', android: 'palette', web: 'palette' }}
-              accessibilityLabel="開啟設計系統瀏覽頁"
+              accessibilityLabel={t('a11y.openDesignSystem')}
               onPress={() => router.push('/design-system')}
             />
           )}
@@ -57,11 +65,11 @@ export default function HomeScreen() {
         <TextField
           value={query}
           onChangeText={setQuery}
-          placeholder="搜尋地點或房源"
+          placeholder={t('home.searchPlaceholder')}
           leadingIcon={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
           returnKeyType="search"
           clearButtonMode="while-editing"
-          accessibilityLabel="搜尋地點或房源"
+          accessibilityLabel={t('home.searchPlaceholder')}
           className="mx-5"
         />
 
@@ -72,7 +80,7 @@ export default function HomeScreen() {
           {CATEGORIES.map((c) => (
             <Chip
               key={c.id}
-              label={c.label}
+              label={t(`category.${c.id}`)}
               icon={c.icon}
               selected={c.id === category}
               onPress={() => setCategory(c.id)}
@@ -96,7 +104,7 @@ export default function HomeScreen() {
         )}
         ListEmptyComponent={
           <Text tone="muted" className="mt-6 text-center">
-            找不到符合條件的房源
+            {t('home.empty')}
           </Text>
         }
       />

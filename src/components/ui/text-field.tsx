@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, TextInput, View, type TextInputProps } from 'react-native';
 
 import { Icon, type IconName } from './icon';
@@ -22,6 +23,7 @@ export function TextField({
   onBlur,
   ...inputProps
 }: Props) {
+  const { t } = useTranslation();
   const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(true);
   const placeholderColor = useTokenColor('fg-muted');
@@ -55,7 +57,7 @@ export function TextField({
           onPress={() => setHidden((h) => !h)}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel={hidden ? '顯示密碼' : '隱藏密碼'}>
+          accessibilityLabel={hidden ? t('a11y.showPassword') : t('a11y.hidePassword')}>
           <Icon
             name={
               hidden

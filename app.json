@@ -32,6 +32,17 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": [
+            "zh-TW",
+            "en",
+            "ja",
+            "zh-CN"
+          ]
+        }
       ]
     ],
     "experiments": {
