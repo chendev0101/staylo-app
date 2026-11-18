@@ -27,7 +27,14 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 
 - NativeWind v5 (release candidate), pinned exactly. `nativewind` and `react-native-css` are a matched pair, so upgrade them together, following https://www.nativewind.dev/v5/.
 - `src/global.css` is the only Tailwind entry point. It is imported once in `src/app/_layout.tsx`, and Metro handles it through `withNativewind` in `metro.config.js`. There is no Babel config.
-- New UI uses `className` with `dark:` variants. Wrap third-party components such as `expo-image` with `styled()` from `nativewind`; `cssInterop` and `remapProps` don't exist in v5. Get `useColorScheme` from `react-native`.
+- Design tokens live only in `src/global.css`: color variables (light in `@theme`, dark in a `prefers-color-scheme: dark` `:root` block, so `dark:` variants aren't needed for tokens), `--text-*` with line heights, `--font-*`, `--radius-*`, `--shadow-*`, and `--spacing: 4px`. Never hardcode hex colors, font sizes, or spacing outside it; add a token instead. Use px, not rem (native rem is 14). Screen edge padding is `px-5`.
+- Build UI from `src/components/ui/`: Text, Icon, Button, IconButton, Chip, TextField, Badge, and Alert. Set appearance with `variant`/`tone` props, and use `className` for layout only. Promote a view into `ui/` only once two screens need it.
+- Props that can't take `className` (icon `tintColor`, `placeholderTextColor`, spinner color) get colors through `useTokenColor()` (`ui/use-token-color.ts`, with a `.web.ts` twin).
+- `/design-system` (`src/app/design-system.tsx`) shows every token and `ui/` component. Add new components and tokens there, and keep its typography spec text in sync with `global.css`.
+- Line-height tokens are unitless ratios (`calc(34 / 28)`). On native, a px line height is treated as a multiple of the font size.
+- The dev server doesn't regenerate Tailwind CSS for newly used classes. Restart it with `npx expo start --clear` (or touch `global.css`) when a new class has no effect.
+- Fonts: Outfit, loaded with `useFonts` in `src/app/_layout.tsx` (Expo Go compatible). There's one family class per weight: `font-outfit`, `font-outfit-medium`, `font-outfit-semibold`, and `font-outfit-bold`. Chinese text falls back to the system font.
+- Wrap third-party components such as `expo-image` with `styled()` from `nativewind`; `cssInterop` and `remapProps` don't exist in v5. Get `useColorScheme` from `react-native`.
 - `lightningcss` is pinned to 1.30.1 through `package.json` `overrides`, because newer versions break react-native-css with "failed to deserialize". Don't bump it unless NativeWind's docs say so, and re-check it on every Expo SDK or NativeWind upgrade.
 
 ## Who owns what
