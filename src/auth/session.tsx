@@ -1,22 +1,22 @@
 /**
- * Session — MOCK until Clerk is set up (AGENTS.md: Clerk owns auth).
- * Screens only use useSession(); the Clerk plan replaces this implementation
- * behind the same hook without touching the screens.
+ * Session: Clerk is the source of truth (AGENTS.md: Clerk owns auth).
+ * Screens only use useSession() for gating; sign-in flows live in src/auth/google.ts and
+ * src/auth/email-code.ts.
  *
- * - isSignedIn: persisted (AsyncStorage `staylo.session`).
- * - isGuest: "Maybe later" — memory only, so onboarding returns on the next cold start.
+ * - isSignedIn: Clerk's session, persisted in the secure-store token cache.
+ * - isGuest: "Maybe later", memory only, so onboarding returns on the next cold start.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, use, useEffect, useState, type ReactNode } from 'react';
+import { ClerkProvider, useAuth } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
+import { createContext, use, useState, type ReactNode } from 'react';
 
-const STORAGE_KEY = 'staylo.session';
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 type Session = {
-  /** False until the stored session has been read. */
+  /** False until Clerk has loaded the stored session. */
   loaded: boolean;
   isSignedIn: boolean;
   isGuest: boolean;
-  signIn: () => void;
   continueAsGuest: () => void;
   signOut: () => void;
 };
@@ -24,35 +24,39 @@ type Session = {
 const SessionContext = createContext<Session | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [loaded, setLoaded] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isGuest, setIsGuest] = useState(false);
-
-  useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((stored) => setIsSignedIn(stored === 'signed-in'))
-      .catch(() => {})
-      .finally(() => setLoaded(true));
-  }, []);
-
-  const signIn = () => {
-    setIsSignedIn(true);
-    AsyncStorage.setItem(STORAGE_KEY, 'signed-in').catch(() => {});
-  };
-
-  const continueAsGuest = () => setIsGuest(true);
-
-  const signOut = () => {
-    setIsSignedIn(false);
-    setIsGuest(false);
-    AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
-  };
-
+  if (!publishableKey) {
+    throw new Error(
+      'Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY. Copy .env.example to .env and add the key from the Clerk dashboard.',
+    );
+  }
   return (
-    <SessionContext value={{ loaded, isSignedIn, isGuest, signIn, continueAsGuest, signOut }}>
-      {children}
-    </SessionContext>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <ClerkSession>{children}</ClerkSession>
+    </ClerkProvider>
   );
+}
+
+function ClerkSession({ children }: { children: ReactNode }) {
+  const { isLoaded, isSignedIn, signOut: clerkSignOut } = useAuth();
+  const [isGuest, setIsGuest] = useState(false);
+  // Latch: once Clerk has loaded, stay "loaded". The root layout renders nothing until loaded,
+  // so a brief reload (e.g. while a new session activates) would unmount the whole navigator
+  // and reset navigation to the first route.
+  const [loadedOnce, setLoadedOnce] = useState(false);
+  if (isLoaded && !loadedOnce) setLoadedOnce(true);
+
+  const value: Session = {
+    loaded: loadedOnce || isLoaded,
+    isSignedIn: isLoaded && !!isSignedIn,
+    isGuest,
+    continueAsGuest: () => setIsGuest(true),
+    signOut: () => {
+      setIsGuest(false);
+      clerkSignOut().catch((e: unknown) => console.warn('Clerk sign-out failed', e));
+    },
+  };
+
+  return <SessionContext value={value}>{children}</SessionContext>;
 }
 
 export function useSession(): Session {
