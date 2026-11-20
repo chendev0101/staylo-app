@@ -75,15 +75,29 @@ function AppStack() {
           headerTintColor: fg,
           headerTitleStyle: { color: fg, fontFamily: 'Outfit_600SemiBold' },
           headerShadowVisible: false,
+          // iOS would label the back button with the previous route's title, and route groups
+          // like (tabs) have none, so show the chevron only.
+          headerBackButtonDisplayMode: 'minimal',
           contentStyle: { backgroundColor: bg },
         }}>
+        {/* Signed in or guest ("maybe later"): the app itself. */}
         <Stack.Protected guard={entered} redirectTo="/intro">
-          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="design-system" options={{ headerShown: false }} />
+          <Stack.Screen name="preferences-edit" options={{ title: t('account.preferences') }} />
+        </Stack.Protected>
+        {/* Signed in only. */}
+        <Stack.Protected guard={session.isSignedIn} redirectTo="/account">
+          <Stack.Screen name="profile/edit" options={{ title: t('account.editProfile') }} />
         </Stack.Protected>
         <Stack.Protected guard={!entered} redirectTo="/">
           <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         </Stack.Protected>
+        {/* Sign-in modal (email + code in one route), opened from onboarding and by guests.
+            Deliberately not guarded: when a guard removes the screen you're on, expo-router resets
+            to the first route, which would drop a guest who signs in from the account tab onto
+            Explore. The modal closes itself before the session activates instead. */}
+        <Stack.Screen name="sign-in" options={{ headerShown: false, presentation: 'modal' }} />
         <Stack.Screen
           name="language"
           options={{

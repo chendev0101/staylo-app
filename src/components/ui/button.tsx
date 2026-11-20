@@ -9,6 +9,8 @@ const variants = {
   primary: { container: 'bg-primary', tone: 'on-primary' },
   secondary: { container: 'bg-surface border border-border', tone: 'default' },
   ghost: { container: 'bg-transparent', tone: 'default' },
+  /** Text-only destructive action, e.g. delete account. */
+  destructive: { container: 'bg-transparent', tone: 'danger' },
   /** Translucent pill that sits on photos. */
   overlay: { container: 'bg-surface-glass', tone: 'default' },
 } as const satisfies Record<string, { container: string; tone: TextTone }>;

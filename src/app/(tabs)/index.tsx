@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
+import { WEB_TAB_BAR_INSET } from '@/components/tab-bar-inset';
 import { Chip } from '@/components/ui/chip';
 import { IconButton } from '@/components/ui/icon-button';
 import { Text } from '@/components/ui/text';
@@ -46,7 +47,7 @@ export default function HomeScreen() {
 
   return (
     // Safe-area insets are runtime values, so they stay inline styles.
-    <View className="flex-1 bg-bg" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-bg" style={{ paddingTop: insets.top + WEB_TAB_BAR_INSET }}>
       <View className="gap-4 border-b border-border pb-4 pt-2">
         <View className="flex-row items-center gap-3 px-5">
           <View className="flex-1">

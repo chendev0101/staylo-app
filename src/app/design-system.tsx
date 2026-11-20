@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useRequireSignIn } from '@/auth/require-sign-in';
 import { useSession } from '@/auth/session';
 import { DevAppearanceToggle } from '@/components/dev-appearance-toggle';
 import { ListingCard } from '@/components/listing-card';
@@ -28,6 +29,7 @@ export default function DesignSystemScreen() {
   const insets = useSafeAreaInsets();
   const { signOut } = useSession();
   const { clear: clearPreferences } = useTravelPreferences();
+  const requireSignIn = useRequireSignIn();
   return (
     <ScrollView
       className="flex-1 bg-bg"
@@ -56,6 +58,17 @@ export default function DesignSystemScreen() {
             clearPreferences();
             signOut(); // the Stack.Protected guard sends the app back to /intro
           }}
+          className="self-start"
+        />
+      )}
+      {__DEV__ && (
+        <Button
+          title="Try sign-in gate (booking)"
+          variant="secondary"
+          size="sm"
+          leadingIcon={{ ios: 'lock', android: 'lock', web: 'lock' }}
+          // Guests get the sign-in modal with the reason; signed-in users pass straight through.
+          onPress={() => requireSignIn('booking')}
           className="self-start"
         />
       )}
@@ -200,6 +213,7 @@ function ButtonsSection() {
         leadingIcon={{ ios: 'person.crop.circle', android: 'account_circle', web: 'account_circle' }}
       />
       <Button title="查看所有房源" variant="ghost" />
+      <Button title="刪除帳號" variant="destructive" />
       <View className="flex-row rounded-lg bg-scrim p-3">
         <Button title="Overlay（照片上）" variant="overlay" size="sm" />
       </View>
