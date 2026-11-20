@@ -50,7 +50,8 @@ export function TextField({
           setFocused(false);
           onBlur?.(e);
         }}
-        className="h-full flex-1 font-outfit text-body text-fg"
+        // web: the container's border already shows focus, so drop the browser's outline.
+        className="h-full flex-1 font-outfit text-body text-fg web:outline-none"
       />
       {secureTextEntry ? (
         <Pressable
