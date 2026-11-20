@@ -47,7 +47,12 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 
 ## Auth and onboarding
 
-- `src/auth/session.tsx` is a **mock** until Clerk is set up: `useSession()` gives `isSignedIn` (persisted) and `isGuest` ("maybe later", memory only). Screens only use `useSession()`, never storage directly. The Clerk plan replaces the implementation behind that hook.
+- Auth is Clerk (`@clerk/expo`). `src/auth/session.tsx` wraps `ClerkProvider` (secure-store token cache) and exposes `useSession()`: `isSignedIn` from Clerk, `isGuest` ("maybe later", memory only). Screens gate on `useSession()` only.
+- Sign-in methods: Google via browser OAuth (`src/auth/google.ts`, `useSSO`, redirect `staylo://sso-callback` allowed in the Clerk dashboard) and a passwordless email code (`src/auth/email-code.ts`: sign-in first, sign-up if the email has no account). Use Clerk's Core 3 resources (`signIn.emailCode`, `signUp.verifications`, `finalize`). Clerk errors map to `auth.errors.*` in `src/auth/errors.ts`.
+- `/sign-in` (`src/app/sign-in.tsx`) is ONE modal route with two steps (email, then code), opened from welcome and by guests. It is deliberately not guarded, and it closes itself just before the session activates. Reason: when a guard removes the screen you're on, expo-router resets to the first route. `useSession().loaded` latches for the same reason: the root layout renders nothing while not loaded.
+- Guests ("maybe later") can browse listings and keyword-search. AI search, policy questions and booking need sign-in: call `useRequireSignIn(reason)` (`src/auth/require-sign-in.ts`) first, and their API routes reject requests without a Clerk session.
+- App screens live in `src/app/(tabs)/` (`NativeTabs`: Explore, Account; tabs never animate). On web NativeTabs renders a pill at the top, so tab screens add `WEB_TAB_BAR_INSET` to their top padding. Destructive actions confirm through `confirmDestructive` (`src/components/confirm.ts`).
+- Phone/SMS sign-in is off: it needs Clerk Pro plus allowing +886 in the dashboard. Production Google needs custom Google Cloud credentials. `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` lives in `.env` (see `.env.example`).
 - Onboarding (`src/app/(onboarding)/`: intro → preferences → welcome) shows whenever the user isn't signed in. The root layout gates it with `Stack.Protected` on `entered = isSignedIn || isGuest`, with `redirectTo` set on both guards. Never redirect manually. The splash screen waits for session and preferences.
 - Travel preferences come from `useTravelPreferences()` (`src/preferences/`). They **order** listings (preferred first) and never filter them. A skip saves an empty choice, so the step isn't repeated.
 - In dev, `/design-system` has a "Replay onboarding" button.
