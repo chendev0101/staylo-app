@@ -12,6 +12,7 @@ export type ColorToken =
   | 'bg'
   | 'surface'
   | 'surface-muted'
+  | 'surface-glass'
   | 'border'
   | 'success'
   | 'success-soft'

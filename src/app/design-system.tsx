@@ -119,6 +119,7 @@ const palette: { token: ColorToken; bg: string; name: string; role: string }[] =
   { token: 'danger', bg: 'bg-danger', name: 'Danger', role: '錯誤狀態' },
   { token: 'info', bg: 'bg-info', name: 'Info', role: '資訊徽章' },
   { token: 'warning', bg: 'bg-warning', name: 'Warning', role: '評分、精選' },
+  { token: 'surface-glass', bg: 'bg-surface-glass', name: 'Glass', role: '照片上的浮層' },
   { token: 'scrim', bg: 'bg-scrim', name: 'Scrim', role: '照片上的遮罩' },
 ];
 
@@ -199,6 +200,9 @@ function ButtonsSection() {
         leadingIcon={{ ios: 'person.crop.circle', android: 'account_circle', web: 'account_circle' }}
       />
       <Button title="查看所有房源" variant="ghost" />
+      <View className="flex-row rounded-lg bg-scrim p-3">
+        <Button title="Overlay（照片上）" variant="overlay" size="sm" />
+      </View>
       <View className="flex-row flex-wrap gap-2">
         <Button title="Small" size="sm" />
         <Button title="Large" size="lg" />
